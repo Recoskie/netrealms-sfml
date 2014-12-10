@@ -1,0 +1,14 @@
+{
+	"properties": {
+		"name": "Robe Hood",
+		"sprite": 16,
+		"equippable": True
+	},
+	"equip" : {
+		"slot": "head"
+		"stats": {
+			"defence": 3,
+			"magic": 10
+		}
+	}
+}
