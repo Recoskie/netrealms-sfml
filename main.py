@@ -44,7 +44,7 @@ Player.sprites['playerHead'] = sprite.Sprite("resources/gfx/sprites/HEAD_robe_ho
 Player.sprites['playerChest'] = sprite.Sprite("resources/gfx/sprites/TORSO_robe_shirt_brown.png", 64, 64)
 
 
-rectangle = sf.RectangleShape(1366)
+#rectangle = sf.RectangleShape(1366, 768 )
 
 darkness = 180
 lightMap = lighting.LightMap(window, darkness)
