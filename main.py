@@ -25,13 +25,13 @@ try:
    text = sf.Text("test", font, 13)
 
    # load music to play
-   music = sf.Music.from_file("resources/music/tjungle.ogg")
+   #music = sf.Music.from_file("resources/music/tjungle.ogg")
 
 except IOError: exit(1)
 
 
 # play the music
-music.play()
+#music.play()
 
 
 Player = player.Player(currentMap, window)
@@ -44,35 +44,33 @@ Player.sprites['playerHead'] = sprite.Sprite("resources/gfx/sprites/HEAD_robe_ho
 Player.sprites['playerChest'] = sprite.Sprite("resources/gfx/sprites/TORSO_robe_shirt_brown.png", 64, 64)
 
 
-#rectangle = sf.RectangleShape(1366, 768 )
+#rectangle = sf.RectangleShape(1366, 768)
 
-darkness = 180
-lightMap = lighting.LightMap(window, darkness)
-light = lightMap.addLight(10, Player)
-lightx = lightMap.addStaticLight(5.5, 500, 500)
 
-#clock = sf.Clock() old way create A clock counter
+#darkness = 180
+#lightMap = lighting.LightMap(window, darkness)
+#light = lightMap.addLight(10, Player)
+#lightx = lightMap.addStaticLight(5.5, 500, 500)
 
 # start the game loop
+
+#use A sfml clock to calculate the Frames Per Second
+
+fps = sf.system.Clock()
+
 while window.is_open:
 
-  #if clock.elapsed_time.milliseconds >= (1000/60): #60 frames A second old way with A if
-
-    #clock.restart() old way reset clock counter than do code below
-    
-  sf.sleep( sf.milliseconds( 1000 / 60 ) ) #60 frames A second this has A higher performance than clock
+  fps.restart()
+  
+  sf.sleep( sf.milliseconds( 1000 / 60 ) ) #60 FPS 
 
   # process events
   for event in window.events:
     # close window: exit
     if type(event) is sf.CloseEvent:
-      #stop the player thread
-      Player.PlayerLoaded = False
       window.close()
-    # the escape key was pressed
+  # the escape key was pressed
     if type(event) is sf.KeyEvent and event.code is sf.Keyboard.ESCAPE:
-      #stop the player thread
-      Player.PlayerLoaded = False
       window.close()
 
     if type(event) is sf.MouseButtonEvent:
@@ -83,10 +81,25 @@ while window.is_open:
   window.clear() # clear screen
   currentMap.DrawGround()
 
-  if not Player.pathfinder.checkPathEnd():
-    Player.pathfinder.pathMoveStep(window )
+  #self.lightShader.set_parameter("light", (self.physics['x'], self.physics['y']))
 
-  Player.drawPlayer(window )
+  #renderS = sf.RenderStates()
+  #renderS.blend_mode = sf.BlendMode.BLEND_ADD
+  #renderS.shader = self.lightShader
 
-  window.draw(text) # draw the string
+  if Player.pathfinder.checkPathEnd():
+    Player.drawPlayer(window, 0)
+  else:
+    Player.pathfinder.pathMoveStep(window)
+
+  #lightMap.draw()
+  #window.draw(text) # draw the string
+  
+  #calculate the FPS
+
+  CalcFPS = int( 1000 / ( fps.elapsed_time.milliseconds - 2.6 ) )
+
+  FPStext = sf.Text( "FPS " + str( CalcFPS ), font, 13 )
+  window.draw( FPStext )
+
   window.display() # update the window
