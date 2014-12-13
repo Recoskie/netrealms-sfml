@@ -97,7 +97,7 @@ while window.is_open:
   
   #calculate the FPS
 
-  CalcFPS = int( 1000 / ( fps.elapsed_time.milliseconds - 2.6 ) )
+  CalcFPS = int( 1000 / ( fps.elapsed_time.milliseconds - 2.59 ) ) # small percision fix
 
   FPStext = sf.Text( "FPS " + str( CalcFPS ), font, 13 )
   window.draw( FPStext )
