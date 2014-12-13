@@ -33,24 +33,16 @@ class Pathfinder:
         if ( ( int( self.variables['pathFinderPoints'][0][0] / 32 + 0.5 ) != int( self.unit.physics['x'] / 32 - 16.5 ) ) and ( int( self.variables['pathFinderPoints'][0][1] / 32 + 0.5 ) != int( self.unit.physics['y'] / 32 + 36.5 ) ) ) and ( self.variables['pathPoint'] != 0 ):
 
             if self.variables['pathFinderPoints'][self.variables['pathPoint']][0] - 16 < self.unit.physics['x']:
-                #moveLeft
-                self.unit.physics['direction'] = 1
-                self.unit.PlayerMove = True
+                self.unit.moveLeft(window)
 
             elif self.variables['pathFinderPoints'][self.variables['pathPoint']][0] - (16 + self.unit.physics['speed']) > self.unit.physics['x']:
-                #moveRight
-                self.unit.physics['direction'] = 3
-                self.unit.PlayerMove = True
+                self.unit.moveRight(window)
 
             elif self.variables['pathFinderPoints'][self.variables['pathPoint']][1] - 36 < self.unit.physics['y']:
-                #moveUp
-                self.unit.physics['direction'] = 0
-                self.unit.PlayerMove = True
+                self.unit.moveUp(window)
 
             elif self.variables['pathFinderPoints'][self.variables['pathPoint']][1] - (36 + self.unit.physics['speed']) > self.unit.physics['y']:
-                #moveDown
-                self.unit.physics['direction'] = 2
-                self.unit.PlayerMove = True
+                self.unit.moveDown(window)
 
             else:
                 
@@ -59,17 +51,12 @@ class Pathfinder:
                 self.unit.physics['x'] = self.variables['pathFinderPoints'][self.variables['pathPoint']][0] - 16
                 self.unit.physics['y'] = self.variables['pathFinderPoints'][self.variables['pathPoint']][1] - 36
 
-                self.unit.drawPlayer(window ) #draw when changing point to stop flicker
+                self.unit.drawPlayer(window, 0) #draw when changing point to stop flicker
 
                 self.variables['pathPoint'] += 1
             
                 if(self.variables['pathPoint'] > len(self.variables['pathFinderPoints']) - 1):
                     self.variables['pathPoint'] = 0
-
-                    #Set the player thread animation for moving false
-
-                    self.unit.PlayerMove=False
-
                     self.variables['pathEnd'] = True
         else:
             
@@ -77,7 +64,7 @@ class Pathfinder:
 
             self.variables['pathPoint'] += 1
 
-            self.unit.drawPlayer(window ) #draw when changing point to stop flicker
+            self.unit.drawPlayer(window, 0) #draw when changing point to stop flicker
 
             if(self.variables['pathPoint'] > len(self.variables['pathFinderPoints']) - 1):
                 self.variables['pathPoint'] = 0
