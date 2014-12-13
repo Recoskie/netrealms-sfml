@@ -44,44 +44,49 @@ Player.sprites['playerHead'] = sprite.Sprite("resources/gfx/sprites/HEAD_robe_ho
 Player.sprites['playerChest'] = sprite.Sprite("resources/gfx/sprites/TORSO_robe_shirt_brown.png", 64, 64)
 
 
-rectangle = sf.RectangleShape(1366, 768)
-
+rectangle = sf.RectangleShape(1366)
 
 darkness = 180
 lightMap = lighting.LightMap(window, darkness)
 light = lightMap.addLight(10, Player)
 lightx = lightMap.addStaticLight(5.5, 500, 500)
 
+#clock = sf.Clock() old way create A clock counter
+
 # start the game loop
 while window.is_open:
-   # process events
-   for event in window.events:
-      # close window: exit
-      if type(event) is sf.CloseEvent:
-         window.close()
-   # the escape key was pressed
-      if type(event) is sf.KeyEvent and event.code is sf.Keyboard.ESCAPE:
-         window.close()
 
-      if type(event) is sf.MouseButtonEvent:
+  #if clock.elapsed_time.milliseconds >= (1000/60): #60 frames A second old way with A if
 
-         Player.pathfinder.resetPathFinder()
-         Player.pathfinder.calculatePath(window, event.position.x, event.position.y)
+    #clock.restart() old way reset clock counter than do code below
+    
+  sf.sleep( sf.milliseconds( 1000 / 60 ) ) #60 frames A second this has A higher performance than clock
 
-   window.clear() # clear screen
-   currentMap.DrawGround()
+  # process events
+  for event in window.events:
+    # close window: exit
+    if type(event) is sf.CloseEvent:
+      #stop the player thread
+      Player.PlayerLoaded = False
+      window.close()
+    # the escape key was pressed
+    if type(event) is sf.KeyEvent and event.code is sf.Keyboard.ESCAPE:
+      #stop the player thread
+      Player.PlayerLoaded = False
+      window.close()
 
-  self.lightShader.set_parameter("light", (self.physics['x'], self.physics['y']))
+    if type(event) is sf.MouseButtonEvent:
 
-  renderS = sf.RenderStates()
-  renderS.blend_mode = sf.BlendMode.BLEND_ADD
-  renderS.shader = self.lightShader
+      Player.pathfinder.resetPathFinder()
+      Player.pathfinder.calculatePath(window, event.position.x, event.position.y)
 
-   if Player.pathfinder.checkPathEnd():
-      Player.drawPlayer(window, 0)
-   else:
-      Player.pathfinder.pathMoveStep(window)
+  window.clear() # clear screen
+  currentMap.DrawGround()
 
-   #lightMap.draw()
-   window.draw(text) # draw the string
-   window.display() # update the window
+  if not Player.pathfinder.checkPathEnd():
+    Player.pathfinder.pathMoveStep(window )
+
+  Player.drawPlayer(window )
+
+  window.draw(text) # draw the string
+  window.display() # update the window
