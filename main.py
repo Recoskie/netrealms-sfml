@@ -4,7 +4,7 @@ import sys, os
 from engine import player
 from engine import maps
 from engine import sprite
-from engine import lighting
+from engine import shader_lighting
 from engine import pathfinding
 
 window = sf.RenderWindow(sf.VideoMode.get_desktop_mode(), "netrealms")
@@ -16,22 +16,17 @@ currentMap = maps.Map(window, "0")
 try:
    window.icon = image.pixels
 
-   # load a sprite to display
-   #texture = sf.Texture.from_file("resources/gfx/sprites/BODY_male.png")
-   #sprite = sf.Sprite(texture)
-
    # create some graphical text to display
    font = sf.Font.from_file("resources/gfx/fonts/netrealms.ttf")
    text = sf.Text("test", font, 13)
 
    # load music to play
-   #music = sf.Music.from_file("resources/music/tjungle.ogg")
+   music = sf.Music.from_file("resources/music/tjungle.ogg")
 
 except IOError: exit(1)
 
-
 # play the music
-#music.play()
+music.play()
 
 
 Player = player.Player(currentMap, window)
@@ -43,20 +38,15 @@ Player.sprites['playerLegs'] = sprite.Sprite("resources/gfx/sprites/LEGS_robe_sk
 Player.sprites['playerHead'] = sprite.Sprite("resources/gfx/sprites/HEAD_robe_hood.png", 64, 64)
 Player.sprites['playerChest'] = sprite.Sprite("resources/gfx/sprites/TORSO_robe_shirt_brown.png", 64, 64)
 
-
-#rectangle = sf.RectangleShape(1366, 768)
-
-
-#darkness = 180
-#lightMap = lighting.LightMap(window, darkness)
-#light = lightMap.addLight(10, Player)
-#lightx = lightMap.addStaticLight(5.5, 500, 500)
-
-# start the game loop
-
-#use A sfml clock to calculate the Frames Per Second
-
 fps = sf.system.Clock()
+
+#get the shader
+
+s =  shader_lighting.MyShader() #instance the shader
+
+# initialize
+
+s.load(1440, 900 ) # create the shader and set texture size
 
 while window.is_open:
 
@@ -69,7 +59,7 @@ while window.is_open:
     # close window: exit
     if type(event) is sf.CloseEvent:
       window.close()
-  # the escape key was pressed
+    # the escape key was pressed
     if type(event) is sf.KeyEvent and event.code is sf.Keyboard.ESCAPE:
       window.close()
 
@@ -78,26 +68,26 @@ while window.is_open:
       Player.pathfinder.resetPathFinder()
       Player.pathfinder.calculatePath(window, event.position.x, event.position.y)
 
-  window.clear() # clear screen
+  window.clear()
   currentMap.DrawGround()
-
-  #self.lightShader.set_parameter("light", (self.physics['x'], self.physics['y']))
-
-  #renderS = sf.RenderStates()
-  #renderS.blend_mode = sf.BlendMode.BLEND_ADD
-  #renderS.shader = self.lightShader
 
   if Player.pathfinder.checkPathEnd():
     Player.drawPlayer(window, 0)
   else:
     Player.pathfinder.pathMoveStep(window)
 
-  #lightMap.draw()
-  #window.draw(text) # draw the string
-  
+  #shader update method inputs
+  #Player X , Y position also centered
+  #100 is the luminosity
+  #0.3 is the darkness
+
+  s.update( Player.playerPos()[0]+50-16 , Player.playerPos()[1]+50+48 , 100 , 0.3 )
+
+  window.draw(s)
+
   #calculate the FPS
 
-  CalcFPS = int( 1000 / ( fps.elapsed_time.milliseconds - 2.59 ) ) # small percision fix
+  CalcFPS = int( 1000 / ( fps.elapsed_time.milliseconds - 2.59 ) )
 
   FPStext = sf.Text( "FPS " + str( CalcFPS ), font, 13 )
   window.draw( FPStext )
